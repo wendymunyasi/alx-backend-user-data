@@ -14,6 +14,7 @@ patterns = {
     'extract': lambda x, y: r'(?P<field>{})=[^{}]*'.format('|'.join(x), y),
     'replace': lambda x: r'\g<field>={}'.format(x),
 }
+# Tuple of PII fields
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
@@ -44,12 +45,15 @@ class RedactingFormatter(logging.Formatter):
         """Filters values in incoming log records using filter_datum.
 
         Args:
-            record (logging.LogRecord): Values to be filtered.
+            record (logging.LogRecord): A logging.LogRecord instance.
 
         Returns:
-            str: The filtered values.
+            str: A string with all occurrences of the `self.fields` in
+            `record.message` replaced by the `self.REDACTION` string.
         """
+        # Call the parent class's format method to get the formatted log line
         msg = super(RedactingFormatter, self).format(record)
+        # Use the filter_datum function to perform substitution of self.fields
         text = filter_datum(self.fields, self.REDACTION, msg, self.SEPARATOR)
         return text
 
@@ -57,7 +61,7 @@ class RedactingFormatter(logging.Formatter):
 def filter_datum(
         fields: List[str], redaction: str, message: str, separator: str,
 ) -> str:
-    """Returns the log message obfuscated.
+    """Returns the log message with certain fields obfuscated.
 
     Args:
         fields (List[str]): a list of strings representing all fields to
@@ -76,7 +80,7 @@ def filter_datum(
 
 
 def get_logger() -> logging.Logger:
-    """Returns a logging.Logger object.
+    """Returns a logging.Logger object named "user_data".
 
     The logger should be named "user_data" and only log up to logging.INFO
     level.
@@ -89,20 +93,27 @@ def get_logger() -> logging.Logger:
     logs. Use it to parameterize the formatter.
 
     Returns:
-        logging.Logger: Object.
+        logging.Logger: A logging.Logger instance.
     """
+    # Create a logger with the specified name
     logger = logging.getLogger("user_data")
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    # Set the logging level to only log messages up to logging.INFO
     logger.setLevel(logging.INFO)
+    # Create a StreamHandler to output log messages to the console
+    stream_handler = logging.StreamHandler()
+    # Disable propagation of log messages to other loggers
     logger.propagate = False
+    # Create an instance of the RedactingFormatter class with the PII_FIELDS,
+    # as fields and set the formatter of the handler
+    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    # Add the handler to the logger
     logger.addHandler(stream_handler)
     return logger
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Returns a connector to the database
-    (mysql.connector.connection.MySQLConnection object.
+    (mysql.connector.connection.MySQLConnection object).
 
     You will connect to a secure holberton database to read a users table.
     The database is protected by a username and password that are set as
@@ -116,10 +127,13 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         mysql.connector.connection.MySQLConnection: Connector to the
         database.
     """
+    # Get the environment variables for the database credentials
     db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    #  OR db_name = os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
     db_name = os.getenv("PERSONAL_DATA_DB_NAME", "")
     db_user = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
     db_pwd = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    # Connect to the database using the obtained credentials
     connection = mysql.connector.connect(
         host=db_host,
         port=3306,
@@ -130,7 +144,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     return connection
 
 
-def main():
+def main() -> None:
     """Obtains a database connection using get_db and retrieve all rows in
     the users table and display each row under a filtered format.
 
@@ -143,23 +157,23 @@ def main():
 
     Only your main function should run when the module is executed.
     """
-    fields = "name,email,phone,ssn,password,ip,last_login,user_agent"
-    columns = fields.split(',')
-    query = "SELECT {} FROM users;".format(fields)
-    info_logger = get_logger()
-    connection = get_db()
-    with connection.cursor() as cursor:
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        for row in rows:
-            record = map(
-                lambda x: '{}={}'.format(x[0], x[1]),
-                zip(columns, row),
-            )
-            msg = '{};'.format('; '.join(list(record)))
-            args = ("user_data", logging.INFO, None, None, msg, None, None)
-            log_record = logging.LogRecord(*args)
-            info_logger.handle(log_record)
+    # Obtain a logger and set the logging level
+    logger = get_logger()
+    logger.setLevel(logging.INFO)
+
+    # Obtain a database connection
+    db = get_db()
+    cursor = db.cursor()
+
+    # Retrieve all rows in the users table
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+
+    # Display each row under a filtered format
+    for row in rows:
+        message = "; ".join([f"{field}={row[field]}" for field in row.keys()])
+        logger.info(filter_datum(PII_FIELDS, RedactingFormatter.REDACTION,
+                                 message, RedactingFormatter.SEPARATOR))
 
 
 if __name__ == "__main__":
