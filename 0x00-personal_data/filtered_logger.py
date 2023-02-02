@@ -71,3 +71,27 @@ def filter_datum(
     """
     extract, replace = (patterns["extract"], patterns["replace"])
     return re.sub(extract(fields, separator), replace(redaction), message)
+
+
+def get_logger() -> logging.Logger:
+    """Returns a logging.Logger object.
+
+    The logger should be named "user_data" and only log up to logging.INFO level.
+    It should not propagate messages to other loggers. It should have a StreamHandler,
+    with RedactingFormatter as formatter.
+    Create a tuple PII_FIELDS constant at the root of the module containing
+    the fields from user_data.csv that are considered PII. PII_FIELDS can contain
+    only 5 fields - choose the right list of fields that can are considered as
+    “important” PIIs or information that you must hide in your logs. Use it to
+    parameterize the formatter.
+
+    Returns:
+        logging.Logger: Object.
+    """
+    logger = logging.getLogger("user_data")
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    logger.addHandler(stream_handler)
+    return logger
