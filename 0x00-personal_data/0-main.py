@@ -10,4 +10,3 @@ messages = ["name=egg;email=eggmin@eggsample.com;password=eggcellent;date_of_bir
 
 for message in messages:
     print(filter_datum(fields, 'xxx', message, ';'))
-    
