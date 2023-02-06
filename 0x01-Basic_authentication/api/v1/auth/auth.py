@@ -12,7 +12,7 @@ class Auth():
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """This function takes a path and a list of excluded paths as arguments
-        and returns a boolean value. 
+        and returns a boolean value.
 
         Returns True if `path` is None.
         Returns True if `excluded_paths` is None or empty.
@@ -49,11 +49,18 @@ class Auth():
         return True
 
     def authorization_header(self, request=None) -> str:
-        """This function takes a request object as an optional argument
-        (defaults to None) and returns a string. The purpose and how the
-        request object is used will be determined later.
-        For now, it simply returns None.
+        """Gets the value of the Authorization header from the request
+
+        Args:
+            request (request, optional): Flask request obj. Defaults to None.
+
+        Returns:
+            str: The value of the Authorization header or None if not present.
         """
+        # If request is None, return None
+        # If request doesn’t contain the header key Authorization, return None
+        if request is not None:
+            return request.headers.get('Authorization', None)
         return None
 
     def current_user(self, request=None) -> TypeVar('User'):
