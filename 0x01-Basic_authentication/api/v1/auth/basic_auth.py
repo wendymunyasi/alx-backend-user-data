@@ -91,14 +91,14 @@ class BasicAuth(Auth):
         """
         # Return None, None if decoded_header is None or
         # not a string
-        if not isinstance(decoded_header, str):
+        if decoded_header is None or not isinstance(decoded_header, str):
             return None, None
-        # Return None, None if decoded_header doesn’t
-        # contain :
-        if ':' not in decoded_header:
+        # Attempt to split email and password by first ':'
+        try:
+            email, password = decoded_header.split(':', 1)
+        except ValueError:
             return None, None
         # Return the user email and the user password
-        email, password = decoded_header.split(':')
         return email, password
 
     def user_object_from_credentials(
