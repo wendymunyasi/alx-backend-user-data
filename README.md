@@ -20,3 +20,4 @@ All of the following folders are projects done during the studies:
 | Project name | Description |
 | ------------ | ----------- |
 | [`0x00. Personal data`](https://github.com/wendymunyasi/alx-backend-user-data/tree/master/0x00-personal_data) | It aims to learn about encrypting user data in **Python language**.|
+| [` 0x01. Basic authentication`](https://github.com/wendymunyasi/alx-backend-user-data/tree/master/0x01-Basic_authentication) | It aims to learn about basic authentication using **Flask** web application framework.|
