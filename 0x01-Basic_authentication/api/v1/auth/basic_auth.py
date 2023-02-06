@@ -2,7 +2,9 @@
 """Module for basic authentication
 """
 import base64
-from typing import Tuple
+from typing import Tuple, TypeVar
+
+from models.user import User
 
 from .auth import Auth
 
@@ -88,12 +90,38 @@ class BasicAuth(Auth):
         # not a string
         if not isinstance(decoded_header, str):
             return None, None
-
         # Return None, None if decoded_header doesn’t
         # contain :
         if ':' not in decoded_header:
             return None, None
-
         # Return the user email and the user password
         email, password = decoded_header.split(':')
         return email, password
+
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> TypeVar('User'):
+        """Returns the User instance based on the email and password.
+
+        Args:
+            user_email (str): The user's email.
+            user_pwd (str): The user's password.
+
+        Returns:
+            User: The User instance or None if the user is not found or the
+            password is invalid.
+        """
+        # Return None if user_email or user_pwd is None or not a string
+        if not all(map(lambda x: isinstance(x, str), (user_email, user_pwd))):
+            return None
+        # Search for the user in the database
+        user = User.search(attributes={'email': user_email})
+        # Return None if there is no user in the database with the given email
+        if not user:
+            return None
+        # Get the first user from the search results
+        user = user[0]
+        # Return None if the password is invalid
+        if not user.is_valid_password(user_pwd):
+            return None
+        # Return the user instance
+        return user
