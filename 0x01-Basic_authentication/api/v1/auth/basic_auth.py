@@ -2,6 +2,7 @@
 """Module for basic authentication
 """
 import base64
+from typing import Tuple
 
 from .auth import Auth
 
@@ -73,3 +74,26 @@ class BasicAuth(Auth):
         # Otherwise, return the decoded value as UTF8 string
         # you can use decode('utf-8')
         return decoded.decode('utf-8')
+
+    def extract_user_credentials(self, decoded_header: str) -> Tuple[str, str]:
+        """Extract the user email and password from the decoded header string.
+
+        Args:
+            decoded_header (str): A decoded header string.
+
+        Returns:
+            Tuple[str, str]: Tuple containing the user email and password.
+        """
+        # Return None, None if decoded_header is None or
+        # not a string
+        if not isinstance(decoded_header, str):
+            return None, None
+
+        # Return None, None if decoded_header doesn’t
+        # contain :
+        if ':' not in decoded_header:
+            return None, None
+
+        # Return the user email and the user password
+        email, password = decoded_header.split(':')
+        return email, password
