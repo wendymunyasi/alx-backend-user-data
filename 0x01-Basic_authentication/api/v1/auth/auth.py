@@ -41,11 +41,11 @@ class Auth():
         # in excluded_paths
         # Loop through excluded paths
         for excluded_path in excluded_paths:
-            # Check if the given path starts with the excluded path, with a * at the end
-            if excluded_path.endswith("*") and path.startswith(excluded_path[:-1]):
-                # Return False if the path starts with the excluded path with a * at the end
+            # Check if given path starts with excluded path, with * at the end
+            if excluded_path.endswith("*") and \
+                    path.startswith(excluded_path[:-1]):
+                # Return False if path starts with excluded path with * at end
                 return False
-            
             # Check if the given path is equal to the excluded path
             elif path == excluded_path:
                 # Return False if the path is equal to the excluded path
