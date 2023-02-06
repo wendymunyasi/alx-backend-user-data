@@ -12,12 +12,41 @@ class Auth():
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """This function takes a path and a list of excluded paths as arguments
-        and returns a boolean value. The purpose of the function and the way
-        it uses the `path` and `excluded_paths` arguments will be determined
-        later.
-        For now, it simply returns False.
+        and returns a boolean value. 
+
+        Returns True if `path` is None.
+        Returns True if `excluded_paths` is None or empty.
+        Returns False if `path` is in `excluded_paths`.
+        You can assume excluded_paths contains string path always ending by
+        a /. This method must be slash tolerant: path=/api/v1/status and
+        path=/api/v1/status/ must be returned False if excluded_paths contains
+        /api/v1/status/.
+
+        Args:
+            path (str): The path to check against the list of excluded paths.
+            excluded_paths (List[str]): The list of excluded paths.
+
+        Returns:
+            bool: True if the path is not in the excluded paths list,
+            False otherwise.
         """
-        return False
+        # If path is None, return True
+        if not path:
+            return True
+        # If excluded_paths is None or empty, return True
+        if not excluded_paths:
+            return True
+        # Add a "/" at the end of path if it's not already there
+        if not path.endswith("/"):
+            path += "/"
+        # Check if path is in excluded_paths and return False if path is
+        # in excluded_paths
+        # Loop through excluded paths
+        for excluded_path in excluded_paths:
+            if path.startswith(excluded_path):
+                return False
+        # If path is not in excluded_paths, return True
+        return True
 
     def authorization_header(self, request=None) -> str:
         """This function takes a request object as an optional argument
