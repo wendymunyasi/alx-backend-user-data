@@ -70,12 +70,15 @@ class BasicAuth(Auth):
         # Return None if base64_authorization_header is not a valid Base64
         # Attempt to decode the base64 string & return None if an error occurs
         try:
-            decoded = base64.b64decode(base64_authorization_header)
-        except Exception:
+            decoded = base64.b64decode(
+                base64_authorization_header,
+                validate=True
+            )
+            # Return the decoded value as UTF8 string
+            # you can use decode('utf-8')
+            return decoded.decode('utf-8')
+        except UnicodeDecodeError:
             return None
-        # Otherwise, return the decoded value as UTF8 string
-        # you can use decode('utf-8')
-        return decoded.decode('utf-8')
 
     def extract_user_credentials(self, decoded_header: str) -> Tuple[str, str]:
         """Extract the user email and password from the decoded header string.
@@ -125,3 +128,24 @@ class BasicAuth(Auth):
             return None
         # Return the user instance
         return user
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """Retrieves the User instance for a request.
+
+        Args:
+            request (:obj:`Request`, optional): The request object. Defaults
+            to None.
+
+        Returns:
+            User: The User instance based on the request.
+        """
+        # Get the authorization header from the request
+        auth_header = self.authorization_header(request)
+        # Extract the Base64 encoded string from the authorization header
+        b64_auth_header = self.extract_base64_authorization_header(auth_header)
+        # Decode the Base64 encoded string
+        dec_header = self.decode_base64_authorization_header(b64_auth_header)
+        # Extract the user email and password from the decoded Base64 string
+        user_email, user_pwd = self.extract_user_credentials(dec_header)
+        # Return the User instance based on the user email and password
+        return self.user_object_from_credentials(user_email, user_pwd)
