@@ -13,6 +13,7 @@ import os
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+app.url_map.strict_slashes = False
 
 
 @app.errorhandler(404)
@@ -34,6 +35,20 @@ def unauthorized(error: Exception) -> Tuple[jsonify, int]:
         status code.
     """
     return jsonify({"error": "Unauthorized"}), 401
+
+
+@app.errorhandler(403)
+def forbidden(error: Exception) -> Tuple[jsonify, int]:
+    """Error handler for unauthorized requests.
+
+    Args:
+        error (Exception): The error raised.
+
+    Returns:
+        Tuple[jsonify, int]: JSON response with the error message and a 401
+        status code.
+    """
+    return jsonify({"error": "Forbidden"}), 403
 
 
 if __name__ == "__main__":

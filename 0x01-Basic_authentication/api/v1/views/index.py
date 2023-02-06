@@ -34,3 +34,13 @@ def unauthorized_endpoint() -> None:
         None: None.
     """
     abort(401)
+
+
+@app_views.route('/forbidden/', methods=['GET'])
+def forbidden_endpoint() -> None:
+    """Endpoint that raises a 403 error.
+
+    Returns:
+        None: None.
+    """
+    abort(403)
