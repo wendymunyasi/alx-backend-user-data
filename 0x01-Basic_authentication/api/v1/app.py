@@ -2,13 +2,18 @@
 """
 Route module for the API
 """
+
+
+import os
 from os import getenv
 from typing import Tuple
-from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
-from flask_cors import (CORS, cross_origin)
-import os
 
+from flask import Flask, abort, jsonify, request
+from flask_cors import CORS, cross_origin
+
+from api.v1.auth.auth import Auth
+from api.v1.auth.basic_auth import BasicAuth
+from api.v1.views import app_views
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
@@ -17,14 +22,16 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 
 
-if os.getenv("AUTH_TYPE"):
-    """Based on the environment variable AUTH_TYPE, load and assign the
-    right instance of authentication to auth.
-    if auth:
-        import Auth from api.v1.auth.auth,
-        create an instance of Auth and assign it to the variable auth
-    """
-    from api.v1.auth.auth import Auth
+# Update api/v1/app.py for using BasicAuth class instead of Auth depending
+# on the value of the environment variable AUTH_TYPE, If AUTH_TYPE is equal
+# to basic_auth:
+#   import BasicAuth from api.v1.auth.basic_auth
+#   create an instance of BasicAuth and assign it to the variable auth
+# Otherwise, keep the previous mechanism with auth an instance of Auth.
+auth_type = getenv('AUTH_TYPE', 'default')
+if auth_type == "basic_auth":
+    auth = BasicAuth()
+else:
     auth = Auth()
 
 
