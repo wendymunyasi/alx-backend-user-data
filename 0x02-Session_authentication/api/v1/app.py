@@ -96,6 +96,8 @@ def handle_request():
     user = auth.current_user(request)
     if user is None:
         abort(403)
+    # Assign the result of auth.current_user(request) to request.current_user
+    request.current_user = user
 
 
 if __name__ == "__main__":
