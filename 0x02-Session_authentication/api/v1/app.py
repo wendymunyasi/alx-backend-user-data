@@ -22,14 +22,16 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 
 
-# Update api/v1/app.py for using BasicAuth class instead of Auth depending
-# on the value of the environment variable AUTH_TYPE, If AUTH_TYPE is equal
-# to basic_auth:
-#   import BasicAuth from api.v1.auth.basic_auth
-#   create an instance of BasicAuth and assign it to the variable auth
-# Otherwise, keep the previous mechanism with auth an instance of Auth.
+# Update api/v1/app.py for using SessionAuth instance for the variable
+# auth depending of the value of the environment variable AUTH_TYPE, If
+# AUTH_TYPE is equal to session_auth:
+#   import SessionAuth from api.v1.auth.session_auth
+#   create an instance of SessionAuth and assign it to the variable auth
 auth_type = getenv('AUTH_TYPE', 'default')
-if auth_type == "basic_auth":
+if auth_type == "session_auth":
+    from api.v1.auth.session_auth import SessionAuth
+    auth = SessionAuth()
+elif auth_type == "basic_auth":
     auth = BasicAuth()
 else:
     auth = Auth()
