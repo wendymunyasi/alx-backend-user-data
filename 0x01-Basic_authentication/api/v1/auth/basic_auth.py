@@ -117,8 +117,11 @@ class BasicAuth(Auth):
         # Return None if user_email or user_pwd is None or not a string
         if not all(map(lambda x: isinstance(x, str), (user_email, user_pwd))):
             return None
-        # Search for the user in the database
-        user = User.search(attributes={'email': user_email})
+        try:
+            # Search for the user in the database
+            user = User.search(attributes={'email': user_email})
+        except Exception:
+            return None
         # Return None if there is no user in the database with the given email
         if not user:
             return None
