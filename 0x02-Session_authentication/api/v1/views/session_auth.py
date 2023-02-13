@@ -6,7 +6,7 @@
 import os
 from typing import Tuple
 
-from flask import jsonify, make_response, request
+from flask import abort, jsonify, request
 
 from api.v1.app import auth
 from api.v1.views import app_views
@@ -15,23 +15,20 @@ from models.user import User
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def session_auth_login() -> Tuple[str, int]:
-    """_summary_
+    """POST /api/v1/auth_session/login.
 
     Returns:
-        Tuple[str, int]: _description_
+        - JSON representation of a User object.
     """
     # Get the email and password values from the form data
     email = request.form.get('email')
     password = request.form.get('password')
-
     # Return an error if the email is missing or empty
     if not email:
         return jsonify({"error": "email missing"}), 400
-
     # Return an error if the password is missing or empty
     if not password:
         return jsonify({"error": "password missing"}), 400
-
     # Retrieve the User instance based on the email
     user = User.search({'email': email})
     # Return an error if no User was found
@@ -49,3 +46,20 @@ def session_auth_login() -> Tuple[str, int]:
     response.set_cookie(os.getenv("SESSION_NAME"), session_id)
     # Return the response with the User and the cookie
     return response
+
+
+@app_views.route(
+    '/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+def session_auth_logout():
+    """DELETE /api/v1/auth_session/logout
+
+    Returns:
+        - An empty JSON object.
+    """
+    # You must use auth.destroy_session(request) for deleting the Session ID
+    is_destroyed = auth.destroy_session(request)
+    # If destroy_session returns False, abort(404)
+    if not is_destroyed:
+        abort(404)
+    # Otherwise, return an empty JSON dictionary with the status code 200
+    return jsonify({}), 200
