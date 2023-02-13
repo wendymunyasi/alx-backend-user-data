@@ -2,6 +2,7 @@
 """
 Module for authentication
 """
+import os
 from typing import List, TypeVar
 
 from flask import request
@@ -77,3 +78,21 @@ class Auth():
         For now, it simply returns None.
         """
         return None
+
+    def session_cookie(self, request=None) -> str:
+        """Retrieves the session cookie from a request.
+
+        Args:
+            request (flask.request, optional): The request to retrieve the session
+            cookie from. Defaults to None.
+
+        Returns:
+            str: The value of the session cookie, None if the request or the
+            cookie is invalid.
+        """
+        # If request is not None
+        if request is not None:
+            # Get the name of the session cookie from the SESSION_NAME environment variable
+            cookie_name = os.getenv('SESSION_NAME')
+            # Return the value of the session cookie
+            return request.cookies.get(cookie_name)
