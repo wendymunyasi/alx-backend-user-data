@@ -5,6 +5,8 @@
 
 from uuid import uuid4
 
+from models.user import User
+
 from .auth import Auth
 
 
@@ -58,3 +60,26 @@ class SessionAuth(Auth):
             # Return the value (user ID) for the key session_id in dictionary
             # user_id_by_session_id
             return self.user_id_by_session_id.get(session_id)
+
+    def current_user(self, request=None) -> User:
+        """Returns a User instance based on a cookie value.
+
+        Args:
+            request (flask.request, optional): The request object containing
+            the session cookie.. Defaults to None.
+
+        Use self.session_cookie(...) & self.user_id_for_session_id(...)
+        to return the User ID based on the cookie _my_session_id.
+
+        Returns:
+            User: A User instance, if a User can be found based on the value
+            of the cookie. Otherwise, returns None.
+        """
+        # Retrieve the value of the _my_session_id cookie from the request
+        session_id = self.session_cookie(request)
+        # Look up the corresponding User ID based on the session_id
+        user_id = self.user_id_for_session_id(session_id)
+        # Retrieve the User instance from the database based on the user_id
+        user = User.get(user_id)
+        # Return the User instance
+        return user
