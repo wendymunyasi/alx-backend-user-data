@@ -37,6 +37,8 @@ class Auth():
         # If excluded_paths is None or empty, return True
         if not excluded_paths:
             return True
+        # Remove the trailing slash from the path
+        path = path.rstrip("/")
         # Check if path is in excluded_paths and return False if path is
         # in excluded_paths
         # Loop through excluded paths
@@ -47,7 +49,7 @@ class Auth():
                 # Return False if path starts with excluded path with * at end
                 return False
             # Check if the given path is equal to the excluded path
-            elif path == excluded_path:
+            elif path == excluded_path.rstrip("/"):
                 # Return False if the path is equal to the excluded path
                 return False
         # If path is not in excluded_paths, return True
