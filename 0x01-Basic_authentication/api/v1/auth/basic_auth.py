@@ -2,6 +2,7 @@
 """Module for basic authentication
 """
 import base64
+import binascii
 from typing import Tuple, TypeVar
 
 from models.user import User
@@ -77,7 +78,7 @@ class BasicAuth(Auth):
             # Return the decoded value as UTF8 string
             # you can use decode('utf-8')
             return decoded.decode('utf-8')
-        except UnicodeDecodeError:
+        except (binascii.Error, UnicodeDecodeError):
             return None
 
     def extract_user_credentials(self, decoded_header: str) -> Tuple[str, str]:
