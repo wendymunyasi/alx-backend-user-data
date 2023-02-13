@@ -83,7 +83,7 @@ class Auth():
         """Retrieves the session cookie from a request.
 
         Args:
-            request (flask.request, optional): The request to retrieve the session
+            request (flask.request, optional): Request to retrieve the session
             cookie from. Defaults to None.
 
         Returns:
@@ -92,7 +92,7 @@ class Auth():
         """
         # If request is not None
         if request is not None:
-            # Get the name of the session cookie from the SESSION_NAME environment variable
+            # Get the name of the session cookie from SESSION_NAME env variable
             cookie_name = os.getenv('SESSION_NAME')
             # Return the value of the session cookie
             return request.cookies.get(cookie_name)
