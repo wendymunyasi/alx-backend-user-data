@@ -69,7 +69,7 @@ def login() -> str:
 def logout() -> str:
     """DELETE /sessions
     Return:
-        - Handles DELETE requests to the "/sessions" endpoint.
+        - A redirect if successful
     """
     # Get the session ID from the "session_id" cookie in the request
     session_id = request.cookies.get("session_id")
@@ -88,7 +88,7 @@ def logout() -> str:
 def profile() -> str:
     """GET /profile
     Return:
-        - Route function for handling GET requests to the "/profile" endpoint.
+        - A JSON payload containing the email if successful.
     """
     # Get the session ID from the "session_id" cookie in the request
     session_id = request.cookies.get("session_id")
@@ -99,6 +99,24 @@ def profile() -> str:
         abort(403)
     # Return the user's email as a JSON payload
     return jsonify({"email": user.email})
+
+
+@app.route("/reset_password", methods=["POST"], strict_slashes=False)
+def get_reset_password_token() -> str:
+    """POST /reset_password
+    Return:
+        - A JSON payload containing the email & reset token if successful.
+    """
+    # Retrieve the email from the form data
+    email = request.form.get("email")
+    try:
+        # Attempt to generate a reset token for the given email
+        reset_token = AUTH.get_reset_password_token(email)
+    except ValueError:
+        # If the email is not found in the database, raise a 403 error
+        abort(403)
+    # Return a JSON payload containing the email and reset token
+    return jsonify({"email": email, "reset_token": reset_token})
 
 
 if __name__ == "__main__":
