@@ -10,7 +10,6 @@ from auth import Auth
 logging.disable(logging.WARNING)
 
 
-
 AUTH = Auth()
 app = Flask(__name__)
 
