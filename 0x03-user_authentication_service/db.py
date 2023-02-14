@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """DB module
 """
+from user import Base, User
 import logging
 
 from sqlalchemy import create_engine
@@ -11,7 +12,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 
 logging.disable(logging.WARNING)
-from user import Base, User
 
 
 class DB:
