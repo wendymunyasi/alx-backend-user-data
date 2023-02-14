@@ -4,6 +4,7 @@
 
 
 import logging
+from typing import Union
 from uuid import uuid4
 
 import bcrypt
@@ -117,3 +118,26 @@ class Auth:
         self._db.update_user(user.id, session_id=session_id)
         # Return the session ID.
         return session_id
+
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
+        """Retrieve a User object from a session ID.
+
+        Args:
+            session_id (str): The ID of the session to retrieve the user from.
+
+        Returns:
+            Union[User, None]: A User object corresponding to the session ID if
+            one exists, otherwise None.
+        """
+        # If the session ID is None or no user is found, return None
+        if session_id is None:
+            return None
+        try:
+            # Attempt to retrieve the user object corresponding to the session
+            # ID from the database
+            user = self._db.find_user_by(session_id=session_id)
+        except NoResultFound:
+            # If no user object is found, return None
+            return None
+        # Otherwise return the corresponding user.
+        return user
