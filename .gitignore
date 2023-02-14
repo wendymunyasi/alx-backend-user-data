@@ -131,3 +131,4 @@ dmypy.json
 .DS_Store
 virtual/
 *.json
+*.db
