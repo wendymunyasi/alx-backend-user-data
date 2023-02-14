@@ -78,7 +78,7 @@ def logout() -> str:
     # If no user is found, abort the request with a 403 Forbidden error
     if user is None:
         abort(403)
-     # Destroy the session associated with the user
+    # Destroy the session associated with the user
     AUTH.destroy_session(user.id)
     # Redirect to the home route
     return redirect("/")
