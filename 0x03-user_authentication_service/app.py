@@ -84,5 +84,22 @@ def logout() -> str:
     return redirect("/")
 
 
+@app.route("/profile", methods=["GET"], strict_slashes=False)
+def profile() -> str:
+    """GET /profile
+    Return:
+        - Route function for handling GET requests to the "/profile" endpoint.
+    """
+    # Get the session ID from the "session_id" cookie in the request
+    session_id = request.cookies.get("session_id")
+    # Retrieve the user associated with the session ID
+    user = AUTH.get_user_from_session_id(session_id)
+    # If no user is found, abort the request with a 403 Forbidden error
+    if user is None:
+        abort(403)
+    # Return the user's email as a JSON payload
+    return jsonify({"email": user.email})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
