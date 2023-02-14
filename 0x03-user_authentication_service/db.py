@@ -78,7 +78,8 @@ class DB:
 
         Args:
             user_id (int): The ID of the user to update.
-            **kwargs: Keyword arguments representing the user's attributes to update.
+            **kwargs: Keyword arguments representing the user's attributes to
+            update.
 
         Raises:
             ValueError: If an invalid attribute is passed in kwargs.
@@ -95,7 +96,8 @@ class DB:
         # Update user's attributes
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                # Raise error if an argument that does not correspond to a user attribute is passed
+                # Raise error if an argument that does not correspond to a user
+                # attribute is passed
                 raise ValueError("User has no attribute {}".format(key))
             setattr(user, key, value)
 
