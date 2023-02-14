@@ -13,6 +13,7 @@ from user import User
 
 logging.disable(logging.WARNING)
 
+
 def _hash_password(password: str) -> bytes:
     """Hashes a password and returns bytes.
 
