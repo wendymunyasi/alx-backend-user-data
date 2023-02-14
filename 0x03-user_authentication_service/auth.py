@@ -173,10 +173,13 @@ class Auth:
             the user.
         """
         # Find the user with the specified email address
-        user = self._db.find_user_by(email=email)
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            user = None
         # If no user is found with specified email address, raise a ValueError
         if user is None:
-            raise ValueError(f"No user found with email: {email}")
+            raise ValueError()
         # Generate a new password reset token & update the user's record in db
         reset_token = _generate_uuid()
         self._db.update_user(user.id, reset_token=reset_token)
