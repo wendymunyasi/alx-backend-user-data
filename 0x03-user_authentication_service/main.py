@@ -113,6 +113,27 @@ def log_out(session_id: str) -> None:
     assert response.status_code == 200
 
 
+def reset_password_token(email: str) -> str:
+    """Tests the process of requesting a password reset.
+    """
+    # Make a POST request to the "/reset_password" endpoint
+    url = "{}/reset_password".format(BASE_URL)
+    data = {
+        "email": email
+    }
+    response = requests.post(url, data=data)
+    # Assert that the response has a 200 status code
+    assert response.status_code == 200
+    # Assert that the response contains the email & reset token as JSON payload
+    assert "email" in response.json()
+    assert response.json()["email"] == email
+    # assert response.json() == {"email": email}
+    # Extract the reset token from the response
+    reset_token = response.json()["reset_token"]
+    # Return the reset_token
+    return reset_token
+
+
 def log_in(email: str, password: str) -> str:
     """Tests logging in.
 
@@ -149,6 +170,6 @@ if __name__ == "__main__":
     session_id = log_in(EMAIL, PASSWD)
     # profile_logged(session_id)
     log_out(session_id)
-    # reset_token = reset_password_token(EMAIL)
+    reset_token = reset_password_token(EMAIL)
     # update_password(EMAIL, reset_token, NEW_PASSWD)
     log_in(EMAIL, NEW_PASSWD)
