@@ -4,6 +4,8 @@
 
 import requests
 
+from app import AUTH
+
 EMAIL = "guillaume@holberton.io"
 PASSWD = "b4l0u"
 NEW_PASSWD = "t4rt1fl3tt3"
@@ -68,6 +70,29 @@ def profile_unlogged() -> None:
     assert response.status_code == 403
 
 
+def profile_logged(session_id: str) -> None:
+    """Tests retrieving profile information whilst logged in.
+
+    Args:
+        session_id (str): The session ID of the logged in user.
+    """
+    # Send a GET request to the /profile endpoint with the session ID cookie
+    url = "{}/profile".format(BASE_URL)
+    headers = {
+        "session_id": session_id
+    }
+    response = requests.get(url, headers=headers)
+    # Assert that the response has a status code of 200
+    assert response.status_code == 200
+    # Parse the JSON payload from the response
+    payload = response.json()
+    # Assert that the email is present in the response payload
+    assert "email" in payload
+    # Assert that email in response payload matches logged in user's email
+    user = AUTH.get_user_from_session_id(session_id)
+    assert user.email == payload["email"]
+
+
 def log_in(email: str, password: str) -> str:
     """Tests logging in.
 
@@ -101,8 +126,8 @@ if __name__ == "__main__":
     register_user(EMAIL, PASSWD)
     log_in_wrong_password(EMAIL, NEW_PASSWD)
     profile_unlogged()
-    # session_id = log_in(EMAIL, PASSWD)
-    # profile_logged(session_id)
+    session_id = log_in(EMAIL, PASSWD)
+    profile_logged(session_id)
     # log_out(session_id)
     # reset_token = reset_password_token(EMAIL)
     # update_password(EMAIL, reset_token, NEW_PASSWD)
