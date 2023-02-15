@@ -58,7 +58,8 @@ def log_in_wrong_password(email: str, password: str) -> None:
 
 
 def profile_unlogged() -> None:
-    """Test given profile is logged out.
+    """Tests behavior of trying to retrieve profile information
+    while being logged out.
     """
     url = "{}/profile".format(BASE_URL)
     # Make a GET request to the /profile endpoint
