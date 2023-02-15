@@ -116,6 +116,9 @@ def log_out(session_id: str) -> None:
 
 def reset_password_token(email: str) -> str:
     """Tests the process of requesting a password reset.
+
+    Args:
+        email (str): The email to request password reset for.
     """
     # Make a POST request to the "/reset_password" endpoint
     url = "{}/reset_password".format(BASE_URL)
@@ -137,6 +140,11 @@ def reset_password_token(email: str) -> str:
 
 def update_password(email: str, reset_token: str, new_password: str) -> None:
     """Tests updating a user's password.
+
+    Args:
+        email (str): The email of the user whose password should be updated.
+        reset_token (str): The reset token generated for the user.
+        new_password (str): The new password to set for the user.
     """
     url = "{}/reset_password".format(BASE_URL)
     data = {
