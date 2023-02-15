@@ -57,6 +57,16 @@ def log_in_wrong_password(email: str, password: str) -> None:
     assert response.status_code == 401
 
 
+def profile_unlogged() -> None:
+    """Test given profile is logged out.
+    """
+    url = "{}/profile".format(BASE_URL)
+    # Make a GET request to the /profile endpoint
+    response = requests.get(url)
+    # Assert that the response status code is 403 Forbidden
+    assert response.status_code == 403
+
+
 def log_in(email: str, password: str) -> str:
     """Tests logging in.
 
@@ -89,7 +99,7 @@ def log_in(email: str, password: str) -> str:
 if __name__ == "__main__":
     register_user(EMAIL, PASSWD)
     log_in_wrong_password(EMAIL, NEW_PASSWD)
-    # profile_unlogged()
+    profile_unlogged()
     # session_id = log_in(EMAIL, PASSWD)
     # profile_logged(session_id)
     # log_out(session_id)
