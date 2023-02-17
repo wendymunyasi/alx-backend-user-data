@@ -66,7 +66,7 @@ class DB:
             error: InvalidRequestError: When invalid query arguments are passed
 
         Returns:
-            user.User: First row found in the `users` table.
+            User: First row found in the `users` table.
         """
         session = self._session
         try:
