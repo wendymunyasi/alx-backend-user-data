@@ -58,7 +58,7 @@ class DB:
             raise
         return new_user
 
-    def find_user_by(self, **kwargs: Dict[str, str]) -> 'User':
+    def find_user_by(self, **kwargs: Dict[str, str]) -> User:
         """Find a user by specified attributes.
 
         Raises:
@@ -75,6 +75,7 @@ class DB:
             raise NoResultFound()
         except InvalidRequestError:
             raise InvalidRequestError()
+        print("Type of user: {}".format(type(user)))
         return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
