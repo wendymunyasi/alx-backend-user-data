@@ -37,7 +37,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> 'User':
+    def add_user(self, email: str, hashed_password: str) -> User:
         """Adds a new user to the db with the given email and hashed password.
 
         Args:
@@ -45,7 +45,7 @@ class DB:
             hashed_password (str): The hashed password of the new user.
 
         Returns:
-            user.User: A User object representing the new user.
+            User: A User object representing the new user.
         """
         # Create new user
         new_user = User(email=email, hashed_password=hashed_password)
@@ -58,7 +58,7 @@ class DB:
             raise
         return new_user
 
-    def find_user_by(self, **kwargs: Dict[str, str]) -> User:
+    def find_user_by(self, **kwargs: Dict[str, str]) -> 'User':
         """Find a user by specified attributes.
 
         Raises:
@@ -66,7 +66,7 @@ class DB:
             error: InvalidRequestError: When invalid query arguments are passed
 
         Returns:
-            User: First row found in the `users` table.
+            user.User: First row found in the `users` table.
         """
         session = self._session
         try:
